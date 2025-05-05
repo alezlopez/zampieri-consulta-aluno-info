@@ -10,7 +10,7 @@ interface StudentInfoProps {
 
 // Define the interface for the student data based on our Supabase schema
 export interface PreMatricula {
-  id: string;
+  id: number; // Changed from string to number to match Supabase
   nomeAluno: string;
   dataNascimento: string;
   serie_pretendida: string;
