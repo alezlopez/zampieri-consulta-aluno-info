@@ -41,7 +41,7 @@ const Index = () => {
       
       console.log("Searching for formatted CPF:", formattedCPF);
       
-      // Use Supabase client with the formatted CPF
+      // Use Supabase client with the formatted CPF - explicitly select all columns
       const { data, error } = await supabase
         .from('pre_matricula')
         .select('*')
@@ -144,4 +144,3 @@ const Index = () => {
 };
 
 export default Index;
-
