@@ -39,6 +39,8 @@ const Index = () => {
       // Extract digits only for the API call
       const cpfDigitsOnly = cpf.replace(/\D/g, '');
       
+      console.log("Searching for CPF:", cpfDigitsOnly);
+      
       // Use Supabase client instead of fetch
       const { data, error } = await supabase
         .from('pre_matricula')
@@ -48,6 +50,8 @@ const Index = () => {
       if (error) {
         throw error;
       }
+      
+      console.log("Query result:", data);
       
       if (data && data.length > 0) {
         setStudentData(data[0] as PreMatricula);
