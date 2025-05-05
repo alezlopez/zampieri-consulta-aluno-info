@@ -8,7 +8,7 @@ interface StudentInfoProps {
   studentData: PreMatricula;
 }
 
-// Define the interface for the student data
+// Define the interface for the student data based on our Supabase schema
 export interface PreMatricula {
   id: string;
   nomeAluno: string;
@@ -26,6 +26,13 @@ export interface PreMatricula {
   usoMedicacao: boolean;
   laudoMedico: boolean;
   score: number;
+  // Additional fields from the database schema
+  cpf?: string;
+  email?: string;
+  whatsapp?: string;
+  boletim?: string;
+  nomeResponsavel?: string;
+  created_at?: string;
 }
 
 export function StudentInfo({ studentData }: StudentInfoProps) {
@@ -98,21 +105,21 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-2">
-            <BooleanDisplay value={studentData.repetente} label="Repetente" />
+            <BooleanDisplay value={Boolean(studentData.repetente)} label="Repetente" />
             <Separator />
-            <BooleanDisplay value={studentData.dificuldadeAprendizagem} label="Dificuldade em leitura/escrita/matemática" />
+            <BooleanDisplay value={Boolean(studentData.dificuldadeAprendizagem)} label="Dificuldade em leitura/escrita/matemática" />
             <Separator />
-            <BooleanDisplay value={studentData.atendimentoEducacional} label="Atendimento educacional" />
+            <BooleanDisplay value={Boolean(studentData.atendimentoEducacional)} label="Atendimento educacional" />
             <Separator />
-            <BooleanDisplay value={studentData.dificuldadeAtencao} label="Dificuldade de atenção" />
+            <BooleanDisplay value={Boolean(studentData.dificuldadeAtencao)} label="Dificuldade de atenção" />
             <Separator />
-            <BooleanDisplay value={studentData.diagnosticoTranstorno} label="Diagnóstico ou suspeita de transtorno" />
+            <BooleanDisplay value={Boolean(studentData.diagnosticoTranstorno)} label="Diagnóstico ou suspeita de transtorno" />
             <Separator />
-            <BooleanDisplay value={studentData.dificuldadeSocializacao} label="Dificuldade de socialização" />
+            <BooleanDisplay value={Boolean(studentData.dificuldadeSocializacao)} label="Dificuldade de socialização" />
             <Separator />
-            <BooleanDisplay value={studentData.usoMedicacao} label="Uso contínuo de medicação" />
+            <BooleanDisplay value={Boolean(studentData.usoMedicacao)} label="Uso contínuo de medicação" />
             <Separator />
-            <BooleanDisplay value={studentData.laudoMedico} label="Laudo médico/educacional" />
+            <BooleanDisplay value={Boolean(studentData.laudoMedico)} label="Laudo médico/educacional" />
           </div>
         </CardContent>
       </Card>
@@ -127,8 +134,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
             <div className="flex items-center space-x-2">
               <span className="text-2xl font-bold">{studentData.score}</span>
               <AlertCircle className={`h-5 w-5 ${
-                studentData.score > 7 ? "text-school-red" : 
-                studentData.score > 3 ? "text-school-yellow" : "text-school-green"
+                Number(studentData.score) > 7 ? "text-school-red" : 
+                Number(studentData.score) > 3 ? "text-school-yellow" : "text-school-green"
               }`} />
             </div>
           </div>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/loader";
 import { toast } from "@/components/ui/use-toast";
 import { AlertCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [cpf, setCpf] = useState("");
@@ -38,24 +39,18 @@ const Index = () => {
       // Extract digits only for the API call
       const cpfDigitsOnly = cpf.replace(/\D/g, '');
       
-      const response = await fetch(
-        `https://lzdhrtcugqnqmyapgmbs.supabase.co/rest/v1/pre_matricula?cpf=eq.${cpfDigitsOnly}`,
-        {
-          headers: {
-            apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6ZGhydGN1Z3FucW15YXBnbWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMyOTk1NTUsImV4cCI6MjA1ODg3NTU1NX0.vefEvdZaH7DmCwvHyH2LtSvZ8h4tykbb0yZ4UBVN0CA",
-            Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6ZGhydGN1Z3FucW15YXBnbWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMyOTk1NTUsImV4cCI6MjA1ODg3NTU1NX0.vefEvdZaH7DmCwvHyH2LtSvZ8h4tykbb0yZ4UBVN0CA"
-          }
-        }
-      );
+      // Use Supabase client instead of fetch
+      const { data, error } = await supabase
+        .from('pre_matricula')
+        .select('*')
+        .eq('cpf', cpfDigitsOnly);
       
-      if (!response.ok) {
-        throw new Error(`Erro na requisição: ${response.status}`);
+      if (error) {
+        throw error;
       }
       
-      const data = await response.json();
-      
       if (data && data.length > 0) {
-        setStudentData(data[0]);
+        setStudentData(data[0] as PreMatricula);
       } else {
         setNotFound(true);
       }
