@@ -64,12 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				school: {
-					blue: '#3b82f6',
-					darkBlue: '#1e40af',
-					lightBlue: '#dbeafe',
-					green: '#10b981',
-					red: '#ef4444',
-					yellow: '#f59e0b',
+					darkGreen: '#0B5D34',
+					green: '#1F7F4C',
+					lightGreen: '#E6F7EF',
+					red: '#D42D2D',
+					gold: '#D4A829',
+					white: '#FFFFFF',
 				}
 			},
 			borderRadius: {

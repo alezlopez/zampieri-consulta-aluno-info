@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/lib/utils";
-import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 interface StudentInfoProps {
   studentData: PreMatricula;
@@ -44,9 +44,9 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       <div className="flex items-center justify-between py-2">
         <span className="text-sm font-medium">{label}:</span>
         <span>
-          {value === "true" || value === "1" ? 
-            <CheckCircle className="h-5 w-5 text-school-red" /> : 
-            <XCircle className="h-5 w-5 text-school-green" />
+          {value === "true" || value === "1" || value === "sim" || value === "Sim" ? 
+            <span className="text-school-green">✅</span> : 
+            <span className="text-school-red">❌</span>
           }
         </span>
       </div>
@@ -56,8 +56,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="bg-school-lightBlue">
-          <CardTitle className="text-school-darkBlue">Dados do Aluno</CardTitle>
+        <CardHeader className="bg-school-lightGreen">
+          <CardTitle className="text-school-darkGreen">Dados do Aluno</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-4">
@@ -121,6 +121,16 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
               </>
             )}
 
+            {studentData.boletim && (
+              <>
+                <Separator />
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Boletim</h3>
+                  <p className="text-lg font-semibold">{studentData.boletim}</p>
+                </div>
+              </>
+            )}
+
             {studentData.Status && (
               <>
                 <Separator />
@@ -135,8 +145,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       </Card>
       
       <Card>
-        <CardHeader className="bg-school-lightBlue">
-          <CardTitle className="text-school-darkBlue">Avaliação Pedagógica</CardTitle>
+        <CardHeader className="bg-school-lightGreen">
+          <CardTitle className="text-school-darkGreen">Avaliação Pedagógica</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-2">
@@ -160,8 +170,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       </Card>
       
       <Card>
-        <CardHeader className="bg-school-lightBlue">
-          <CardTitle className="text-school-darkBlue">Resultado Interno</CardTitle>
+        <CardHeader className="bg-school-lightGreen">
+          <CardTitle className="text-school-darkGreen">Resultado Interno</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
@@ -170,7 +180,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
               <span className="text-2xl font-bold">{studentData.score || '0'}</span>
               <AlertCircle className={`h-5 w-5 ${
                 studentData.score && parseInt(studentData.score) > 7 ? "text-school-red" : 
-                studentData.score && parseInt(studentData.score) > 3 ? "text-school-yellow" : "text-school-green"
+                studentData.score && parseInt(studentData.score) > 3 ? "text-school-gold" : "text-school-green"
               }`} />
             </div>
           </div>
@@ -179,8 +189,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
 
       {(studentData.data_entrevista || studentData.link_entrevista) && (
         <Card>
-          <CardHeader className="bg-school-lightBlue">
-            <CardTitle className="text-school-darkBlue">Informações da Entrevista</CardTitle>
+          <CardHeader className="bg-school-lightGreen">
+            <CardTitle className="text-school-darkGreen">Informações da Entrevista</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             <div className="space-y-4">
@@ -198,7 +208,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                     href={studentData.link_entrevista} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-school-blue hover:underline"
+                    className="text-school-darkGreen hover:underline"
                   >
                     Acessar link da entrevista
                   </a>

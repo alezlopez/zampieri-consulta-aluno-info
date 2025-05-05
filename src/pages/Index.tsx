@@ -93,17 +93,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-school-darkBlue text-white p-6 shadow-md">
+      <header className="bg-school-darkGreen text-white p-6 shadow-md">
         <div className="container mx-auto">
           <h1 className="text-2xl md:text-3xl font-bold">Consulta de Pré-matrícula</h1>
-          <p className="text-school-lightBlue mt-1">Colégio Zampieri</p>
+          <p className="text-school-lightGreen mt-1">Colégio Zampieri</p>
         </div>
       </header>
       
       <main className="container mx-auto py-8 px-4">
         <div className="max-w-3xl mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 className="text-xl font-semibold mb-4 text-school-darkBlue">Buscar Aluno</h2>
+            <h2 className="text-xl font-semibold mb-4 text-school-darkGreen">Buscar Aluno</h2>
             
             <div className="space-y-4">
               <CPFInput
@@ -114,7 +114,7 @@ const Index = () => {
               
               <Button 
                 onClick={handleSearch} 
-                className="w-full bg-school-blue hover:bg-school-darkBlue"
+                className="w-full bg-school-green hover:bg-school-darkGreen"
               >
                 Buscar
               </Button>
