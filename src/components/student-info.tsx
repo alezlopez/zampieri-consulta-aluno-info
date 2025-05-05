@@ -17,15 +17,15 @@ export interface PreMatricula {
   turnoPreferencia: string;
   escolaAtual: string;
   tipoEscola: string;
-  repetente: boolean;
-  dificuldadeAprendizagem: boolean;
-  atendimentoEducacional: boolean;
-  dificuldadeAtencao: boolean;
-  diagnosticoTranstorno: boolean;
-  dificuldadeSocializacao: boolean;
-  usoMedicacao: boolean;
-  laudoMedico: boolean;
-  score: number;
+  repetente: string | null; // Changed from boolean to string to match Supabase
+  dificuldadeAprendizagem: string | null; // Changed from boolean to string
+  atendimentoEducacional: string | null; // Changed from boolean to string
+  dificuldadeAtencao: string | null; // Changed from boolean to string
+  diagnosticoTranstorno: string | null; // Changed from boolean to string
+  dificuldadeSocializacao: string | null; // Changed from boolean to string
+  usoMedicacao: string | null; // Changed from boolean to string
+  laudoMedico: string | null; // Changed from boolean to string
+  score: string | null; // Changed from number to string to match Supabase
   // Additional fields from the database schema
   cpf?: string;
   email?: string;
@@ -37,12 +37,12 @@ export interface PreMatricula {
 
 export function StudentInfo({ studentData }: StudentInfoProps) {
   // Helper function to display boolean values as icons
-  const BooleanDisplay = ({ value, label }: { value: boolean, label: string }) => {
+  const BooleanDisplay = ({ value, label }: { value: string | null, label: string }) => {
     return (
       <div className="flex items-center justify-between py-2">
         <span className="text-sm font-medium">{label}:</span>
         <span>
-          {value ? 
+          {value === "true" || value === "1" ? 
             <CheckCircle className="h-5 w-5 text-school-red" /> : 
             <XCircle className="h-5 w-5 text-school-green" />
           }
@@ -105,21 +105,21 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-2">
-            <BooleanDisplay value={Boolean(studentData.repetente)} label="Repetente" />
+            <BooleanDisplay value={studentData.repetente} label="Repetente" />
             <Separator />
-            <BooleanDisplay value={Boolean(studentData.dificuldadeAprendizagem)} label="Dificuldade em leitura/escrita/matemática" />
+            <BooleanDisplay value={studentData.dificuldadeAprendizagem} label="Dificuldade em leitura/escrita/matemática" />
             <Separator />
-            <BooleanDisplay value={Boolean(studentData.atendimentoEducacional)} label="Atendimento educacional" />
+            <BooleanDisplay value={studentData.atendimentoEducacional} label="Atendimento educacional" />
             <Separator />
-            <BooleanDisplay value={Boolean(studentData.dificuldadeAtencao)} label="Dificuldade de atenção" />
+            <BooleanDisplay value={studentData.dificuldadeAtencao} label="Dificuldade de atenção" />
             <Separator />
-            <BooleanDisplay value={Boolean(studentData.diagnosticoTranstorno)} label="Diagnóstico ou suspeita de transtorno" />
+            <BooleanDisplay value={studentData.diagnosticoTranstorno} label="Diagnóstico ou suspeita de transtorno" />
             <Separator />
-            <BooleanDisplay value={Boolean(studentData.dificuldadeSocializacao)} label="Dificuldade de socialização" />
+            <BooleanDisplay value={studentData.dificuldadeSocializacao} label="Dificuldade de socialização" />
             <Separator />
-            <BooleanDisplay value={Boolean(studentData.usoMedicacao)} label="Uso contínuo de medicação" />
+            <BooleanDisplay value={studentData.usoMedicacao} label="Uso contínuo de medicação" />
             <Separator />
-            <BooleanDisplay value={Boolean(studentData.laudoMedico)} label="Laudo médico/educacional" />
+            <BooleanDisplay value={studentData.laudoMedico} label="Laudo médico/educacional" />
           </div>
         </CardContent>
       </Card>
@@ -134,8 +134,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
             <div className="flex items-center space-x-2">
               <span className="text-2xl font-bold">{studentData.score}</span>
               <AlertCircle className={`h-5 w-5 ${
-                Number(studentData.score) > 7 ? "text-school-red" : 
-                Number(studentData.score) > 3 ? "text-school-yellow" : "text-school-green"
+                studentData.score && parseInt(studentData.score) > 7 ? "text-school-red" : 
+                studentData.score && parseInt(studentData.score) > 3 ? "text-school-yellow" : "text-school-green"
               }`} />
             </div>
           </div>
