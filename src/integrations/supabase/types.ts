@@ -36,6 +36,7 @@ export type Database = {
           boletim: string | null
           cpf: string | null
           created_at: string
+          data_entrevista: string | null
           dataNascimento: string | null
           diagnosticoTranstorno: string | null
           dificuldadeAprendizagem: string | null
@@ -45,11 +46,13 @@ export type Database = {
           escolaAtual: string | null
           id: number
           laudoMedico: string | null
+          link_entrevista: string | null
           nomeAluno: string | null
           nomeResponsavel: string | null
           repetente: string | null
           score: string | null
           serie_pretendida: string | null
+          Status: string | null
           tipoEscola: string | null
           turnoPreferencia: string | null
           usoMedicacao: string | null
@@ -59,7 +62,8 @@ export type Database = {
           atendimentoEducacional?: string | null
           boletim?: string | null
           cpf?: string | null
-          created_at?: string
+          created_at: string
+          data_entrevista?: string | null
           dataNascimento?: string | null
           diagnosticoTranstorno?: string | null
           dificuldadeAprendizagem?: string | null
@@ -69,11 +73,13 @@ export type Database = {
           escolaAtual?: string | null
           id?: number
           laudoMedico?: string | null
+          link_entrevista?: string | null
           nomeAluno?: string | null
           nomeResponsavel?: string | null
           repetente?: string | null
           score?: string | null
           serie_pretendida?: string | null
+          Status?: string | null
           tipoEscola?: string | null
           turnoPreferencia?: string | null
           usoMedicacao?: string | null
@@ -84,6 +90,7 @@ export type Database = {
           boletim?: string | null
           cpf?: string | null
           created_at?: string
+          data_entrevista?: string | null
           dataNascimento?: string | null
           diagnosticoTranstorno?: string | null
           dificuldadeAprendizagem?: string | null
@@ -93,11 +100,13 @@ export type Database = {
           escolaAtual?: string | null
           id?: number
           laudoMedico?: string | null
+          link_entrevista?: string | null
           nomeAluno?: string | null
           nomeResponsavel?: string | null
           repetente?: string | null
           score?: string | null
           serie_pretendida?: string | null
+          Status?: string | null
           tipoEscola?: string | null
           turnoPreferencia?: string | null
           usoMedicacao?: string | null

@@ -36,16 +36,16 @@ const Index = () => {
     setLoading(true);
     
     try {
-      // Extract digits only for the API call
-      const cpfDigitsOnly = cpf.replace(/\D/g, '');
+      // Search with formatted CPF since that's how it's stored in the database
+      const formattedCPF = cpf; // Keep the formatting (e.g., 123.456.789-00)
       
-      console.log("Searching for CPF:", cpfDigitsOnly);
+      console.log("Searching for formatted CPF:", formattedCPF);
       
-      // Use Supabase client instead of fetch
+      // Use Supabase client with the formatted CPF
       const { data, error } = await supabase
         .from('pre_matricula')
         .select('*')
-        .eq('cpf', cpfDigitsOnly);
+        .eq('cpf', formattedCPF);
       
       if (error) {
         throw error;
@@ -53,7 +53,28 @@ const Index = () => {
       
       console.log("Query result:", data);
       
-      if (data && data.length > 0) {
+      // If no results with formatted CPF, try with digits only as fallback
+      if (data && data.length === 0) {
+        console.log("No results with formatted CPF, trying with digits only");
+        const cpfDigitsOnly = cpf.replace(/\D/g, '');
+        
+        const { data: dataDigitsOnly, error: errorDigitsOnly } = await supabase
+          .from('pre_matricula')
+          .select('*')
+          .eq('cpf', cpfDigitsOnly);
+          
+        if (errorDigitsOnly) {
+          throw errorDigitsOnly;
+        }
+        
+        console.log("Query result with digits only:", dataDigitsOnly);
+        
+        if (dataDigitsOnly && dataDigitsOnly.length > 0) {
+          setStudentData(dataDigitsOnly[0] as PreMatricula);
+        } else {
+          setNotFound(true);
+        }
+      } else if (data && data.length > 0) {
         setStudentData(data[0] as PreMatricula);
       } else {
         setNotFound(true);
@@ -123,3 +144,4 @@ const Index = () => {
 };
 
 export default Index;
+
