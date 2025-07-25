@@ -67,9 +67,7 @@ const Login = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-school-green rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xl">LOGO</span>
-            </div>
+            <img src="/lovable-uploads/a19b7b63-1082-4838-8ae7-2c0396b4bdc4.png" alt="Logo" className="h-20 w-auto" />
           </div>
           <CardTitle className="text-2xl text-school-darkGreen">Acompanhamento de Matrículas</CardTitle>
         </CardHeader>
