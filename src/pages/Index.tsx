@@ -5,8 +5,9 @@ import { StudentInfo, PreMatricula } from "@/components/student-info";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/loader";
 import { toast } from "@/components/ui/use-toast";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, LogOut, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [cpf, setCpf] = useState("");
@@ -14,6 +15,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [studentData, setStudentData] = useState<PreMatricula | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const { signOut, user } = useAuth();
 
   const validateCPF = (cpf: string) => {
     // Simplified CPF validation - just checking if it has the right format
@@ -94,9 +96,26 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-school-darkGreen text-white p-6 shadow-md">
-        <div className="container mx-auto">
-          <h1 className="text-2xl md:text-3xl font-bold">Consulta de Pré-matrícula</h1>
-          <p className="text-school-lightGreen mt-1">Colégio Zampieri</p>
+        <div className="container mx-auto flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold">Consulta de Pré-matrícula</h1>
+            <p className="text-school-lightGreen mt-1">Colégio Zampieri</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              <span className="text-sm">Usuário logado</span>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={signOut}
+              className="text-white border-white hover:bg-white hover:text-school-darkGreen"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
       
