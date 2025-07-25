@@ -171,12 +171,12 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
               <span className="text-sm font-medium">Laudo médico/educacional:</span>
               <div className="flex items-center gap-2">
                 <span>
-                  {studentData.laudoMedico === "true" || studentData.laudoMedico === "1" || studentData.laudoMedico === "sim" || studentData.laudoMedico === "Sim" ? 
+                  {studentData.laudoMedico ? 
                     <span className="text-school-green">✅</span> : 
                     <span className="text-school-red">❌</span>
                   }
                 </span>
-                {(studentData.laudoMedico === "true" || studentData.laudoMedico === "1" || studentData.laudoMedico === "sim" || studentData.laudoMedico === "Sim") && (
+                {studentData.laudoMedico && (
                   <Button
                     onClick={() => window.open(studentData.laudoMedico, '_blank')}
                     variant="outline"
