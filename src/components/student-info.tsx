@@ -90,6 +90,24 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   return (
     <div className="space-y-6">
       <Card>
+        <CardHeader className="bg-primary/10">
+          <CardTitle className="text-primary">Status da Matrícula</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between">
+            <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
+            <Button 
+              onClick={handleConfirmInterview}
+              disabled={isLoading}
+              className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
+            >
+              {isLoading ? 'Enviando...' : 'Confirmar Entrevista'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader className="bg-school-lightGreen">
           <CardTitle className="text-school-darkGreen">Dados do Aluno</CardTitle>
         </CardHeader>
@@ -171,24 +189,6 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
               </>
             )}
 
-            <Separator />
-            
-            <div className="bg-primary/10 p-4 rounded-lg border-2 border-primary">
-              <h3 className="text-sm font-medium text-primary mb-2">Status da Matrícula</h3>
-              <p className="text-xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
-            </div>
-
-            <Separator />
-            
-            <div className="flex justify-center">
-              <Button 
-                onClick={handleConfirmInterview}
-                disabled={isLoading}
-                className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
-              >
-                {isLoading ? 'Enviando...' : 'Confirmar Entrevista'}
-              </Button>
-            </div>
           </div>
         </CardContent>
       </Card>
