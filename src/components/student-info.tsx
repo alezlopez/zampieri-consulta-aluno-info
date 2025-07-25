@@ -47,29 +47,54 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const handleConfirmInterview = async () => {
     setIsLoading(true);
     try {
+      let newStatus: string;
+      let successMessage: string;
+      
+      if (studentData.Status === 'Entrevista Realizada') {
+        newStatus = 'Matrícula Concluída';
+        successMessage = "Status atualizado para 'Matrícula Concluída'";
+      } else {
+        newStatus = 'Entrevista Realizada';
+        successMessage = "Status atualizado para 'Entrevista Realizada'";
+      }
+
       const { error } = await supabase
         .from('pre_matricula')
-        .update({ Status: 'Entrevista Realizada' })
+        .update({ Status: newStatus })
         .eq('id', studentData.id);
 
       if (error) {
         throw error;
       }
-      
+
       toast({
         title: "Sucesso",
-        description: "Status atualizado para 'Entrevista Realizada'!",
+        description: successMessage,
       });
+
+      // Atualizar o estado local para refletir a mudança
+      studentData.Status = newStatus;
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
       toast({
         title: "Erro",
-        description: "Falha ao atualizar o status. Tente novamente.",
+        description: "Não foi possível atualizar o status",
         variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getButtonText = () => {
+    if (studentData.Status === 'Entrevista Realizada') {
+      return 'Confirmar Matrícula';
+    }
+    return 'Confirmar Entrevista';
+  };
+
+  const shouldShowButton = () => {
+    return studentData.Status !== 'Matrícula Concluída';
   };
 
   // Helper function to display boolean values as icons
@@ -96,13 +121,15 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
-            <Button 
-              onClick={handleConfirmInterview}
-              disabled={isLoading}
-              className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
-            >
-              {isLoading ? 'Enviando...' : 'Confirmar Entrevista'}
-            </Button>
+            {shouldShowButton() && (
+              <Button 
+                onClick={handleConfirmInterview}
+                disabled={isLoading}
+                className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
+              >
+                {isLoading ? 'Enviando...' : getButtonText()}
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
