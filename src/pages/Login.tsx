@@ -63,10 +63,15 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-school-lightGreen to-school-green/20 p-4">
       <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Sistema de Login</CardTitle>
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 bg-school-green rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-xl">LOGO</span>
+            </div>
+          </div>
+          <CardTitle className="text-2xl text-school-darkGreen">Acompanhamento de Matrículas</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -96,7 +101,7 @@ const Login = () => {
             </div>
             <Button 
               type="submit" 
-              className="w-full" 
+              className="w-full bg-school-green hover:bg-school-green/90 text-white" 
               disabled={isLoading}
             >
               {isLoading ? <Loader /> : 'Entrar'}
