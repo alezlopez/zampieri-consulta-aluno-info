@@ -15,7 +15,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [studentData, setStudentData] = useState<PreMatricula | null>(null);
   const [notFound, setNotFound] = useState(false);
-  const { signOut, user } = useAuth();
+  const { signOut } = useAuth();
 
   const validateCPF = (cpf: string) => {
     // Simplified CPF validation - just checking if it has the right format
@@ -41,8 +41,6 @@ const Index = () => {
       // Search with formatted CPF since that's how it's stored in the database
       const formattedCPF = cpf; // Keep the formatting (e.g., 123.456.789-00)
       
-      console.log("Searching for formatted CPF:", formattedCPF);
-      
       // Use Supabase client with the formatted CPF - explicitly select all columns
       const { data, error } = await supabase
         .from('pre_matricula')
@@ -53,11 +51,8 @@ const Index = () => {
         throw error;
       }
       
-      console.log("Query result:", data);
-      
       // If no results with formatted CPF, try with digits only as fallback
       if (data && data.length === 0) {
-        console.log("No results with formatted CPF, trying with digits only");
         const cpfDigitsOnly = cpf.replace(/\D/g, '');
         
         const { data: dataDigitsOnly, error: errorDigitsOnly } = await supabase
@@ -68,8 +63,6 @@ const Index = () => {
         if (errorDigitsOnly) {
           throw errorDigitsOnly;
         }
-        
-        console.log("Query result with digits only:", dataDigitsOnly);
         
         if (dataDigitsOnly && dataDigitsOnly.length > 0) {
           setStudentData(dataDigitsOnly[0] as PreMatricula);
