@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 interface StudentInfoProps {
   studentData: PreMatricula;
@@ -38,6 +40,35 @@ export interface PreMatricula {
 }
 
 export function StudentInfo({ studentData }: StudentInfoProps) {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleConfirmInterview = async () => {
+    setIsLoading(true);
+    try {
+      await fetch('https://n8n.colegiozampieri.com/webhook/entrevistarealizada', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify("entrevistaRealizada"),
+      });
+      
+      toast({
+        title: "Sucesso",
+        description: "Entrevista confirmada com sucesso!",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Falha ao confirmar entrevista. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Helper function to display boolean values as icons
   const BooleanDisplay = ({ value, label }: { value: string | null, label: string }) => {
     return (
@@ -142,6 +173,18 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
             <div className="bg-primary/10 p-4 rounded-lg border-2 border-primary">
               <h3 className="text-sm font-medium text-primary mb-2">Status da Matrícula</h3>
               <p className="text-xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
+            </div>
+
+            <Separator />
+            
+            <div className="flex justify-center">
+              <Button 
+                onClick={handleConfirmInterview}
+                disabled={isLoading}
+                className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
+              >
+                {isLoading ? 'Enviando...' : 'Confirmar Entrevista'}
+              </Button>
             </div>
           </div>
         </CardContent>
