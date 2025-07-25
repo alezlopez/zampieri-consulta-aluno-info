@@ -1,8 +1,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-import { AlertCircle } from "lucide-react";
 
 interface StudentInfoProps {
   studentData: PreMatricula;
@@ -126,20 +126,23 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                 <Separator />
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Boletim</h3>
-                  <p className="text-lg font-semibold">{studentData.boletim}</p>
+                  <Button
+                    onClick={() => window.open(studentData.boletim, '_blank')}
+                    variant="outline"
+                    className="mt-2"
+                  >
+                    Visualizar
+                  </Button>
                 </div>
               </>
             )}
 
-            {studentData.Status && (
-              <>
-                <Separator />
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Status</h3>
-                  <p className="text-lg font-semibold">{studentData.Status}</p>
-                </div>
-              </>
-            )}
+            <Separator />
+            
+            <div className="bg-primary/10 p-4 rounded-lg border-2 border-primary">
+              <h3 className="text-sm font-medium text-primary mb-2">Status da Matrícula</h3>
+              <p className="text-xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -164,28 +167,30 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
             <Separator />
             <BooleanDisplay value={studentData.usoMedicacao} label="Uso contínuo de medicação" />
             <Separator />
-            <BooleanDisplay value={studentData.laudoMedico} label="Laudo médico/educacional" />
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="bg-school-lightGreen">
-          <CardTitle className="text-school-darkGreen">Resultado Interno</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium">Score calculado:</h3>
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl font-bold">{studentData.score || '0'}</span>
-              <AlertCircle className={`h-5 w-5 ${
-                studentData.score && parseInt(studentData.score) > 7 ? "text-school-red" : 
-                studentData.score && parseInt(studentData.score) > 3 ? "text-school-gold" : "text-school-green"
-              }`} />
+            <div className="flex items-center justify-between py-2">
+              <span className="text-sm font-medium">Laudo médico/educacional:</span>
+              <div className="flex items-center gap-2">
+                <span>
+                  {studentData.laudoMedico === "true" || studentData.laudoMedico === "1" || studentData.laudoMedico === "sim" || studentData.laudoMedico === "Sim" ? 
+                    <span className="text-school-green">✅</span> : 
+                    <span className="text-school-red">❌</span>
+                  }
+                </span>
+                {(studentData.laudoMedico === "true" || studentData.laudoMedico === "1" || studentData.laudoMedico === "sim" || studentData.laudoMedico === "Sim") && (
+                  <Button
+                    onClick={() => window.open(studentData.laudoMedico, '_blank')}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Visualizar
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
+      
 
       {(studentData.data_entrevista || studentData.link_entrevista) && (
         <Card>
