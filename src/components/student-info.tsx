@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface StudentInfoProps {
   studentData: PreMatricula;
@@ -46,22 +47,24 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const handleConfirmInterview = async () => {
     setIsLoading(true);
     try {
-      await fetch('https://n8n.colegiozampieri.com/webhook/entrevistarealizada', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify("entrevistaRealizada"),
-      });
+      const { error } = await supabase
+        .from('pre_matricula')
+        .update({ Status: 'Entrevista Realizada' })
+        .eq('id', studentData.id);
+
+      if (error) {
+        throw error;
+      }
       
       toast({
         title: "Sucesso",
-        description: "Entrevista confirmada com sucesso!",
+        description: "Status atualizado para 'Entrevista Realizada'!",
       });
     } catch (error) {
+      console.error('Erro ao atualizar status:', error);
       toast({
         title: "Erro",
-        description: "Falha ao confirmar entrevista. Tente novamente.",
+        description: "Falha ao atualizar o status. Tente novamente.",
         variant: "destructive",
       });
     } finally {
