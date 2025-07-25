@@ -50,12 +50,12 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       let newStatus: string;
       let successMessage: string;
       
-      if (studentData.Status === 'Entrevista Realizada') {
+      if (studentData.Status === 'Entrevista Realizada - Matrícula Pendente') {
         newStatus = 'Matrícula Concluída';
         successMessage = "Status atualizado para 'Matrícula Concluída'";
       } else {
-        newStatus = 'Entrevista Realizada';
-        successMessage = "Status atualizado para 'Entrevista Realizada'";
+        newStatus = 'Entrevista Realizada - Matrícula Pendente';
+        successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
       }
 
       const { error } = await supabase
@@ -87,7 +87,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   };
 
   const getButtonText = () => {
-    if (studentData.Status === 'Entrevista Realizada') {
+    if (studentData.Status === 'Entrevista Realizada - Matrícula Pendente') {
       return 'Confirmar Matrícula';
     }
     return 'Confirmar Entrevista';
