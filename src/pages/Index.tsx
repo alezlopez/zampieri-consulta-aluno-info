@@ -116,7 +116,7 @@ const Index = () => {
               variant="outline" 
               size="sm" 
               onClick={signOut}
-              className="text-white border-white hover:bg-white hover:text-school-darkGreen"
+              className="text-white border-white hover:bg-white hover:text-school-darkGreen bg-transparent"
             >
               <LogOut className="h-4 w-4 mr-2" />
               Sair
