@@ -14,6 +14,7 @@ const Index = () => {
   const [cpfError, setCpfError] = useState("");
   const [loading, setLoading] = useState(false);
   const [studentData, setStudentData] = useState<PreMatricula | null>(null);
+  const [studentsData, setStudentsData] = useState<PreMatricula[]>([]);
   const [notFound, setNotFound] = useState(false);
   const { signOut } = useAuth();
 
@@ -26,6 +27,7 @@ const Index = () => {
   const handleSearch = async () => {
     // Reset states
     setStudentData(null);
+    setStudentsData([]);
     setNotFound(false);
     
     // Validate CPF format
@@ -65,17 +67,24 @@ const Index = () => {
         }
         
         if (dataDigitsOnly && dataDigitsOnly.length > 0) {
-          setStudentData(dataDigitsOnly[0] as PreMatricula);
+          const students = dataDigitsOnly as PreMatricula[];
+          setStudentsData(students);
+          if (students.length === 1) {
+            setStudentData(students[0]);
+          }
         } else {
           setNotFound(true);
         }
       } else if (data && data.length > 0) {
-        setStudentData(data[0] as PreMatricula);
+        const students = data as PreMatricula[];
+        setStudentsData(students);
+        if (students.length === 1) {
+          setStudentData(students[0]);
+        }
       } else {
         setNotFound(true);
       }
     } catch (error) {
-      console.error("Erro ao buscar dados:", error);
       toast({
         variant: "destructive",
         title: "Erro na consulta",
@@ -84,6 +93,10 @@ const Index = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleStudentSelect = (student: PreMatricula) => {
+    setStudentData(student);
   };
 
   return (
@@ -139,6 +152,37 @@ const Index = () => {
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex items-center gap-4">
               <AlertCircle className="text-school-red h-8 w-8 flex-shrink-0" />
               <p className="font-medium text-red-800">❌ Nenhum aluno encontrado com esse CPF.</p>
+            </div>
+          )}
+          
+          {studentsData.length > 1 && !studentData && (
+            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
+              <h3 className="text-lg font-semibold mb-4 text-school-darkGreen">
+                Múltiplos alunos encontrados - Selecione o aluno desejado:
+              </h3>
+              <div className="space-y-3">
+                {studentsData.map((student, index) => (
+                  <div 
+                    key={student.id || index}
+                    className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                    onClick={() => handleStudentSelect(student)}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h4 className="font-medium text-school-darkGreen">{student.nomeAluno}</h4>
+                        <p className="text-sm text-gray-600">Série: {student.serie_pretendida}</p>
+                        <p className="text-sm text-gray-600">Data de nascimento: {student.dataNascimento}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-gray-500">Criado em: {student.created_at}</p>
+                        {student.Status && (
+                          <p className="text-sm font-medium text-school-green">Status: {student.Status}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
           
