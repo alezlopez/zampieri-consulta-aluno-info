@@ -121,15 +121,6 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
-            {shouldShowButton() && (
-              <Button 
-                onClick={handleConfirmInterview}
-                disabled={isLoading}
-                className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
-              >
-                {isLoading ? 'Enviando...' : getButtonText()}
-              </Button>
-            )}
           </div>
         </CardContent>
       </Card>
