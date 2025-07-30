@@ -50,12 +50,19 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const handleConfirmInterview = async () => {
     setIsLoading(true);
     try {
-      const newStatus = 'Entrevista Realizada - Matrícula Pendente';
-      const successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
+      const newStatus = 'Entrevista Confirmada';
+      const successMessage = "Status atualizado para 'Entrevista Confirmada'";
+
+      const updateData: any = { Status: newStatus };
+      
+      // Incluir o desconto se foi selecionado
+      if (selectedDiscount) {
+        updateData.desconto = selectedDiscount;
+      }
 
       const { error } = await supabase
         .from('pre_matricula')
-        .update({ Status: newStatus })
+        .update(updateData)
         .eq('id', studentData.id);
 
       if (error) {
@@ -69,6 +76,9 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
 
       // Atualizar o estado local para refletir a mudança
       studentData.Status = newStatus;
+      if (selectedDiscount) {
+        studentData.desconto = selectedDiscount;
+      }
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
       toast({
@@ -86,7 +96,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   };
 
   const shouldShowButton = () => {
-    return studentData.Status !== 'Entrevista Realizada - Matrícula Pendente' && studentData.Status !== 'Matrícula Concluída';
+    return studentData.Status === 'Avaliação agendada';
   };
 
   // Helper function to display boolean values as icons
@@ -114,13 +124,28 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
           <div className="flex items-center justify-between">
             <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
             {shouldShowButton() && (
-              <Button 
-                onClick={handleConfirmInterview}
-                disabled={isLoading}
-                className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
-              >
-                {isLoading ? 'Enviando...' : getButtonText()}
-              </Button>
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-500 mb-2">Desconto na mensalidade</label>
+                  <Select value={selectedDiscount} onValueChange={setSelectedDiscount}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Selecionar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5%</SelectItem>
+                      <SelectItem value="15">15%</SelectItem>
+                      <SelectItem value="30">30%</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={handleConfirmInterview}
+                  disabled={isLoading}
+                  className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2 mt-6"
+                >
+                  {isLoading ? 'Enviando...' : getButtonText()}
+                </Button>
+              </div>
             )}
           </div>
         </CardContent>
