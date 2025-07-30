@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatDate } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -43,6 +44,7 @@ export interface PreMatricula {
 export function StudentInfo({ studentData }: StudentInfoProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedDiscount, setSelectedDiscount] = useState<string>("");
 
   const handleConfirmInterview = async () => {
     setIsLoading(true);
@@ -122,13 +124,27 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
           <div className="flex items-center justify-between">
             <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
             {shouldShowButton() && (
-              <Button 
-                onClick={handleConfirmInterview}
-                disabled={isLoading}
-                className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
-              >
-                {isLoading ? 'Enviando...' : getButtonText()}
-              </Button>
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-500 mb-2">Desconto na mensalidade</label>
+                  <Select value={selectedDiscount} onValueChange={setSelectedDiscount}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Selecionar" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5%</SelectItem>
+                      <SelectItem value="30">30%</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={handleConfirmInterview}
+                  disabled={isLoading}
+                  className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2 mt-6"
+                >
+                  {isLoading ? 'Enviando...' : getButtonText()}
+                </Button>
+              </div>
             )}
           </div>
         </CardContent>
