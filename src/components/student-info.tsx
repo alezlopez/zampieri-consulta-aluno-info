@@ -40,6 +40,11 @@ export interface PreMatricula {
   data_entrevista: string | null;
   link_entrevista: string | null;
   desconto: string | null;
+  codigo_aluno: string | null;
+  possui_terapeuta_ocupacional: string | null;
+  nome_terapeuta_ocupacional: string | null;
+  Rg_terapeuta_ocupacional: string | null;
+  telefone_terapeuta_ocupacional: string | null;
 }
 
 export function StudentInfo({ studentData }: StudentInfoProps) {
@@ -243,6 +248,16 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
               </>
             )}
 
+            {studentData.codigo_aluno && (
+              <>
+                <Separator />
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Código do aluno</h3>
+                  <p className="text-lg font-semibold">{studentData.codigo_aluno}</p>
+                </div>
+              </>
+            )}
+
           </div>
         </CardContent>
       </Card>
@@ -318,6 +333,44 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                     Acessar link da entrevista
                   </a>
                 </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {(studentData.possui_terapeuta_ocupacional === 'sim' || studentData.possui_terapeuta_ocupacional === 'Sim' || studentData.possui_terapeuta_ocupacional === 'true') && (
+        <Card>
+          <CardHeader className="bg-school-lightGreen">
+            <CardTitle className="text-school-darkGreen">Informações do Terapeuta Ocupacional</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {studentData.nome_terapeuta_ocupacional && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Nome do terapeuta</h3>
+                  <p className="text-lg font-semibold">{studentData.nome_terapeuta_ocupacional}</p>
+                </div>
+              )}
+              
+              {studentData.Rg_terapeuta_ocupacional && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">RG do terapeuta</h3>
+                    <p className="text-lg font-semibold">{studentData.Rg_terapeuta_ocupacional}</p>
+                  </div>
+                </>
+              )}
+
+              {studentData.telefone_terapeuta_ocupacional && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500">Telefone do terapeuta</h3>
+                    <p className="text-lg font-semibold">{studentData.telefone_terapeuta_ocupacional}</p>
+                  </div>
+                </>
               )}
             </div>
           </CardContent>
