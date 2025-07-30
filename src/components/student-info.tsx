@@ -162,6 +162,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="5">5%</SelectItem>
+                      <SelectItem value="15">15%</SelectItem>
                       <SelectItem value="30">30%</SelectItem>
                     </SelectContent>
                   </Select>
