@@ -50,49 +50,16 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const handleConfirmInterview = async () => {
     setIsLoading(true);
     try {
-      let newStatus: string;
-      let successMessage: string;
-      
-      if (studentData.Status === 'Entrevista Realizada - Matrícula Pendente') {
-        newStatus = 'Matrícula Concluída';
-        successMessage = "Status atualizado para 'Matrícula Concluída'";
-      } else {
-        newStatus = 'Entrevista Realizada - Matrícula Pendente';
-        successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
-      }
-
-      const updateData: any = { Status: newStatus };
-      
-      // Se for confirmação de matrícula e há desconto selecionado, incluir o desconto
-      if (newStatus === 'Matrícula Concluída' && selectedDiscount) {
-        updateData.desconto = selectedDiscount;
-      }
+      const newStatus = 'Entrevista Realizada - Matrícula Pendente';
+      const successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
 
       const { error } = await supabase
         .from('pre_matricula')
-        .update(updateData)
+        .update({ Status: newStatus })
         .eq('id', studentData.id);
 
       if (error) {
         throw error;
-      }
-
-      // Se for matrícula concluída, enviar webhook
-      if (newStatus === 'Matrícula Concluída') {
-        try {
-          const webhookData = {
-            ...studentData,
-            Status: newStatus,
-            desconto: selectedDiscount || null
-          };
-
-          await supabase.functions.invoke('send-matricula-webhook', {
-            body: { studentData: webhookData }
-          });
-        } catch (webhookError) {
-          console.error('Erro ao enviar webhook:', webhookError);
-          // Não falhar a operação principal se o webhook falhar
-        }
       }
 
       toast({
@@ -102,9 +69,6 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
 
       // Atualizar o estado local para refletir a mudança
       studentData.Status = newStatus;
-      if (newStatus === 'Matrícula Concluída' && selectedDiscount) {
-        studentData.desconto = selectedDiscount;
-      }
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
       toast({
@@ -118,14 +82,11 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   };
 
   const getButtonText = () => {
-    if (studentData.Status === 'Entrevista Realizada - Matrícula Pendente') {
-      return 'Confirmar Matrícula';
-    }
     return 'Confirmar Entrevista';
   };
 
   const shouldShowButton = () => {
-    return studentData.Status !== 'Matrícula Concluída';
+    return studentData.Status !== 'Entrevista Realizada - Matrícula Pendente' && studentData.Status !== 'Matrícula Concluída';
   };
 
   // Helper function to display boolean values as icons
@@ -153,28 +114,13 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
           <div className="flex items-center justify-between">
             <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
             {shouldShowButton() && (
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-500 mb-2">Desconto na mensalidade</label>
-                  <Select value={selectedDiscount} onValueChange={setSelectedDiscount}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Selecionar" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5%</SelectItem>
-                      <SelectItem value="15">15%</SelectItem>
-                      <SelectItem value="30">30%</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button 
-                  onClick={handleConfirmInterview}
-                  disabled={isLoading}
-                  className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2 mt-6"
-                >
-                  {isLoading ? 'Enviando...' : getButtonText()}
-                </Button>
-              </div>
+              <Button 
+                onClick={handleConfirmInterview}
+                disabled={isLoading}
+                className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
+              >
+                {isLoading ? 'Enviando...' : getButtonText()}
+              </Button>
             )}
           </div>
         </CardContent>
