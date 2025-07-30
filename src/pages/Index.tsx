@@ -67,7 +67,10 @@ const Index = () => {
         }
         
         if (dataDigitsOnly && dataDigitsOnly.length > 0) {
-          const students = dataDigitsOnly as PreMatricula[];
+          const students = dataDigitsOnly.map((student: any) => ({
+            ...student,
+            score: student.score || null
+          })) as PreMatricula[];
           setStudentsData(students);
           if (students.length === 1) {
             setStudentData(students[0]);
@@ -76,7 +79,10 @@ const Index = () => {
           setNotFound(true);
         }
       } else if (data && data.length > 0) {
-        const students = data as PreMatricula[];
+        const students = data.map((student: any) => ({
+          ...student,
+          score: student.score || null
+        })) as PreMatricula[];
         setStudentsData(students);
         if (students.length === 1) {
           setStudentData(students[0]);

@@ -132,10 +132,12 @@ export type Database = {
         Row: {
           atendimentoEducacional: string | null
           boletim: string | null
+          codigo_aluno: string | null
           cpf: string | null
           created_at: string
           data_entrevista: string | null
           dataNascimento: string | null
+          desconto: string | null
           diagnosticoTranstorno: string | null
           dificuldadeAprendizagem: string | null
           dificuldadeAtencao: string | null
@@ -158,10 +160,12 @@ export type Database = {
         Insert: {
           atendimentoEducacional?: string | null
           boletim?: string | null
+          codigo_aluno?: string | null
           cpf?: string | null
           created_at: string
           data_entrevista?: string | null
           dataNascimento?: string | null
+          desconto?: string | null
           diagnosticoTranstorno?: string | null
           dificuldadeAprendizagem?: string | null
           dificuldadeAtencao?: string | null
@@ -184,10 +188,12 @@ export type Database = {
         Update: {
           atendimentoEducacional?: string | null
           boletim?: string | null
+          codigo_aluno?: string | null
           cpf?: string | null
           created_at?: string
           data_entrevista?: string | null
           dataNascimento?: string | null
+          desconto?: string | null
           diagnosticoTranstorno?: string | null
           dificuldadeAprendizagem?: string | null
           dificuldadeAtencao?: string | null

@@ -39,6 +39,7 @@ export interface PreMatricula {
   Status: string | null;
   data_entrevista: string | null;
   link_entrevista: string | null;
+  desconto: string | null;
 }
 
 export function StudentInfo({ studentData }: StudentInfoProps) {
@@ -60,13 +61,38 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
       }
 
+      const updateData: any = { Status: newStatus };
+      
+      // Se for confirmação de matrícula e há desconto selecionado, incluir o desconto
+      if (newStatus === 'Matrícula Concluída' && selectedDiscount) {
+        updateData.desconto = selectedDiscount;
+      }
+
       const { error } = await supabase
         .from('pre_matricula')
-        .update({ Status: newStatus })
+        .update(updateData)
         .eq('id', studentData.id);
 
       if (error) {
         throw error;
+      }
+
+      // Se for matrícula concluída, enviar webhook
+      if (newStatus === 'Matrícula Concluída') {
+        try {
+          const webhookData = {
+            ...studentData,
+            Status: newStatus,
+            desconto: selectedDiscount || null
+          };
+
+          await supabase.functions.invoke('send-matricula-webhook', {
+            body: { studentData: webhookData }
+          });
+        } catch (webhookError) {
+          console.error('Erro ao enviar webhook:', webhookError);
+          // Não falhar a operação principal se o webhook falhar
+        }
       }
 
       toast({
@@ -76,6 +102,9 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
 
       // Atualizar o estado local para refletir a mudança
       studentData.Status = newStatus;
+      if (newStatus === 'Matrícula Concluída' && selectedDiscount) {
+        studentData.desconto = selectedDiscount;
+      }
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
       toast({
@@ -228,6 +257,16 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                   >
                     Visualizar
                   </Button>
+                </div>
+              </>
+            )}
+
+            {studentData.desconto && (
+              <>
+                <Separator />
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Desconto aplicado</h3>
+                  <p className="text-lg font-semibold text-green-600">{studentData.desconto}%</p>
                 </div>
               </>
             )}
