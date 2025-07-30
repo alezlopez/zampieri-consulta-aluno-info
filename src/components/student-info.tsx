@@ -96,7 +96,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   };
 
   const shouldShowButton = () => {
-    return studentData.Status === 'Avaliação agendada';
+    return studentData.Status === 'Avaliação Agendada';
   };
 
   // Helper function to display boolean values as icons
