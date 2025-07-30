@@ -50,8 +50,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const handleConfirmInterview = async () => {
     setIsLoading(true);
     try {
-      const newStatus = 'Entrevista Confirmada';
-      const successMessage = "Status atualizado para 'Entrevista Confirmada'";
+      const newStatus = 'Entrevista Realizada - Matrícula Pendente';
+      const successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
 
       const updateData: any = { Status: newStatus };
       
