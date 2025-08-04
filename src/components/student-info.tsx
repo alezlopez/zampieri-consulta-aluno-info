@@ -45,6 +45,7 @@ export interface PreMatricula {
   nome_terapeuta_ocupacional: string | null;
   Rg_terapeuta_ocupacional: string | null;
   telefone_terapeuta_ocupacional: string | null;
+  link_contrato: string | null;
 }
 
 export function StudentInfo({ studentData }: StudentInfoProps) {
@@ -254,6 +255,22 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">Código do aluno</h3>
                   <p className="text-lg font-semibold">{studentData.codigo_aluno}</p>
+                </div>
+              </>
+            )}
+
+            {studentData.link_contrato && (
+              <>
+                <Separator />
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Contrato</h3>
+                  <Button
+                    onClick={() => window.open(studentData.link_contrato, '_blank')}
+                    variant="outline"
+                    className="mt-2"
+                  >
+                    Visualizar contrato
+                  </Button>
                 </div>
               </>
             )}
