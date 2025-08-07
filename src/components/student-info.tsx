@@ -59,7 +59,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const [observations, setObservations] = useState<string>("");
 
   const handleConfirmInterview = async () => {
-    if (!selectedDiscount) {
+    if (!selectedDiscount && studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado') {
       toast({
         title: "Erro",
         description: "Por favor, selecione o desconto",
@@ -205,20 +205,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
             <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
             {shouldShowButton() && (
               <div className="flex items-center gap-4">
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-500 mb-2">Desconto na mensalidade</label>
-                  <Select value={selectedDiscount} onValueChange={setSelectedDiscount}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue placeholder="Selecionar" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5%</SelectItem>
-                      <SelectItem value="15">15%</SelectItem>
-                      <SelectItem value="30">30%</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex gap-2 mt-6">
+                {studentData.Status === 'Reavaliação por Pendencias  - Agendamento Confirmado' ? (
                   <Button 
                     onClick={handleConfirmInterview}
                     disabled={isLoading}
@@ -226,15 +213,40 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                   >
                     {isLoading ? 'Enviando...' : getButtonText()}
                   </Button>
-                  <Button 
-                    onClick={() => setShowObservationsDialog(true)}
-                    disabled={isLoading}
-                    variant="destructive"
-                    className="px-8 py-2"
-                  >
-                    Pendente
-                  </Button>
-                </div>
+                ) : (
+                  <>
+                    <div className="flex flex-col">
+                      <label className="text-sm font-medium text-gray-500 mb-2">Desconto na mensalidade</label>
+                      <Select value={selectedDiscount} onValueChange={setSelectedDiscount}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue placeholder="Selecionar" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="5">5%</SelectItem>
+                          <SelectItem value="15">15%</SelectItem>
+                          <SelectItem value="30">30%</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex gap-2 mt-6">
+                      <Button 
+                        onClick={handleConfirmInterview}
+                        disabled={isLoading}
+                        className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
+                      >
+                        {isLoading ? 'Enviando...' : getButtonText()}
+                      </Button>
+                      <Button 
+                        onClick={() => setShowObservationsDialog(true)}
+                        disabled={isLoading}
+                        variant="destructive"
+                        className="px-8 py-2"
+                      >
+                        Pendente
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
