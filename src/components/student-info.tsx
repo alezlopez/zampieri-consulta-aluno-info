@@ -317,6 +317,43 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         </Card>
       )}
 
+      {(studentData.Status === 'Avaliação Agendada' || studentData.data_entrevista || studentData.link_entrevista) && (
+        <Card>
+          <CardHeader className="bg-school-lightGreen">
+            <CardTitle className="text-school-darkGreen">Informações da Entrevista</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {studentData.data_entrevista && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Data da entrevista</h3>
+                  <p className="text-lg font-semibold">{formatDate(studentData.data_entrevista)}</p>
+                </div>
+              )}
+              
+              {studentData.link_entrevista && (
+                <div>
+                  <h3 className="text-sm font-medium text-gray-500">Link da entrevista</h3>
+                  <Button
+                    onClick={() => window.open(studentData.link_entrevista, '_blank')}
+                    variant="outline"
+                    className="mt-2"
+                  >
+                    Acessar Link
+                  </Button>
+                </div>
+              )}
+              
+              {studentData.Status === 'Avaliação Agendada' && !studentData.data_entrevista && !studentData.link_entrevista && (
+                <div className="text-center py-4">
+                  <p className="text-gray-500">Informações da entrevista serão exibidas quando disponíveis</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader className="bg-school-lightGreen">
           <CardTitle className="text-school-darkGreen">Dados do Aluno</CardTitle>
@@ -484,37 +521,6 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       </Card>
       
 
-      {(studentData.data_entrevista || studentData.link_entrevista) && (
-        <Card>
-          <CardHeader className="bg-school-lightGreen">
-            <CardTitle className="text-school-darkGreen">Informações da Entrevista</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              {studentData.data_entrevista && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Data da entrevista</h3>
-                  <p className="text-lg font-semibold">{formatDate(studentData.data_entrevista)}</p>
-                </div>
-              )}
-              
-              {studentData.link_entrevista && (
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500">Link da entrevista</h3>
-                  <a 
-                    href={studentData.link_entrevista} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-school-darkGreen hover:underline"
-                  >
-                    Acessar link da entrevista
-                  </a>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {(studentData.possui_terapeuta_ocupacional === 'sim' || studentData.possui_terapeuta_ocupacional === 'Sim' || studentData.possui_terapeuta_ocupacional === 'true') && (
         <Card>
