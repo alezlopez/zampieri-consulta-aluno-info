@@ -176,7 +176,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   };
 
   const shouldShowButton = () => {
-    return studentData.Status === 'Avaliação Agendada' || studentData.Status === 'Entrevista Realizada - Pendente';
+    return studentData.Status === 'Avaliação Agendada' || studentData.Status === 'Reavaliação por Pendencias  - Agendamento Confirmado';
   };
 
   // Helper function to display boolean values as icons
