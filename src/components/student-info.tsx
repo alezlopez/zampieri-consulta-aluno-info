@@ -241,20 +241,20 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         <CardHeader className="bg-primary/10">
           <CardTitle className="text-primary">Status da Matrícula</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <p className="text-xl sm:text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
             {(() => {
               const uiControls = getUIControls();
               const isButtonDisabled = uiControls.requireDiscount && !selectedDiscount;
               
               return (uiControls.showConfirmButton || uiControls.showPendentButton) && (
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-end gap-4 w-full sm:w-auto">
                   {uiControls.showDropdown && (
-                    <div className="flex flex-col">
+                    <div className="flex flex-col w-full sm:w-auto">
                       <label className="text-sm font-medium text-gray-500 mb-2">Desconto na mensalidade</label>
                       <Select value={selectedDiscount} onValueChange={setSelectedDiscount}>
-                        <SelectTrigger className="w-40">
+                        <SelectTrigger className="w-full sm:w-40">
                           <SelectValue placeholder="Selecionar" />
                         </SelectTrigger>
                         <SelectContent>
@@ -265,12 +265,12 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                       </Select>
                     </div>
                   )}
-                  <div className="flex gap-2 mt-6">
+                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     {uiControls.showConfirmButton && (
                       <Button 
                         onClick={handleConfirmInterview}
                         disabled={isLoading || isButtonDisabled}
-                        className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
+                        className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white w-full sm:w-auto px-4 sm:px-8 py-2"
                       >
                         {isLoading ? 'Enviando...' : getButtonText()}
                       </Button>
@@ -280,7 +280,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                         onClick={() => setShowObservationsDialog(true)}
                         disabled={isLoading || isButtonDisabled}
                         variant="destructive"
-                        className="px-8 py-2"
+                        className="w-full sm:w-auto px-4 sm:px-8 py-2"
                       >
                         Pendente
                       </Button>
@@ -337,7 +337,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                   <Button
                     onClick={() => window.open(studentData.link_entrevista, '_blank')}
                     variant="outline"
-                    className="mt-2"
+                    className="mt-2 w-full sm:w-auto"
                   >
                     Acessar Link
                   </Button>
@@ -358,7 +358,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         <CardHeader className="bg-school-lightGreen">
           <CardTitle className="text-school-darkGreen">Dados do Aluno</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -428,7 +428,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                   <Button
                     onClick={() => window.open(studentData.boletim, '_blank')}
                     variant="outline"
-                    className="mt-2"
+                    className="mt-2 w-full sm:w-auto"
                   >
                     Visualizar
                   </Button>
@@ -464,7 +464,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                   <Button
                     onClick={() => window.open(studentData.link_contrato, '_blank')}
                     variant="outline"
-                    className="mt-2"
+                    className="mt-2 w-full sm:w-auto"
                   >
                     Visualizar contrato
                   </Button>
