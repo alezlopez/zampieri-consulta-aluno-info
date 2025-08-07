@@ -223,6 +223,17 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         </CardContent>
       </Card>
 
+      {studentData.Status === 'Entrevista Realizada - Pendente' && studentData.obs_entrevista && (
+        <Card>
+          <CardHeader className="bg-yellow-50">
+            <CardTitle className="text-yellow-800">Observações da Entrevista</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <p className="text-gray-800 whitespace-pre-wrap">{studentData.obs_entrevista}</p>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader className="bg-school-lightGreen">
           <CardTitle className="text-school-darkGreen">Dados do Aluno</CardTitle>
@@ -460,16 +471,6 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         </Card>
       )}
 
-      {studentData.Status === 'Entrevista Realizada - Pendente' && studentData.obs_entrevista && (
-        <Card>
-          <CardHeader className="bg-yellow-50">
-            <CardTitle className="text-yellow-800">Observações da Entrevista</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <p className="text-gray-800 whitespace-pre-wrap">{studentData.obs_entrevista}</p>
-          </CardContent>
-        </Card>
-      )}
 
       <Dialog open={showObservationsDialog} onOpenChange={setShowObservationsDialog}>
         <DialogContent>
