@@ -49,6 +49,7 @@ export interface PreMatricula {
   telefone_terapeuta_ocupacional: string | null;
   link_contrato: string | null;
   obs_entrevista: string | null;
+  data_reavaliacao: string | null;
 }
 
 export function StudentInfo({ studentData }: StudentInfoProps) {
@@ -291,6 +292,19 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
           </div>
         </CardContent>
       </Card>
+
+      {(studentData.Status === 'Reavaliação por Pendencias - Agendamento Confirmado' || 
+        studentData.Status === 'Reavaliação por Pendencias  - Agendamento Confirmado') && 
+        studentData.data_reavaliacao && (
+        <Card>
+          <CardHeader className="bg-blue-50">
+            <CardTitle className="text-blue-800">Data de Reavaliação</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <p className="text-lg font-semibold text-blue-800">{formatDate(studentData.data_reavaliacao)}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {studentData.Status === 'Entrevista Realizada - Pendente' && studentData.obs_entrevista && (
         <Card>
