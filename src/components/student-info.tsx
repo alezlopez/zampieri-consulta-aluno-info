@@ -59,7 +59,9 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const [observations, setObservations] = useState<string>("");
 
   const handleConfirmInterview = async () => {
-    if (!selectedDiscount && studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado') {
+    if (!selectedDiscount && 
+        studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado' && 
+        studentData.Status !== 'Reavaliação por Pendencias - Agendamento Confirmado') {
       toast({
         title: "Erro",
         description: "Por favor, selecione o desconto",
@@ -78,7 +80,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       };
 
       // Só adiciona desconto se não for Reavaliação por Pendencias
-      if (studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado') {
+      if (studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado' && 
+          studentData.Status !== 'Reavaliação por Pendencias - Agendamento Confirmado') {
         updateData.desconto = selectedDiscount;
       }
 
@@ -180,7 +183,11 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   };
 
   const shouldShowButton = () => {
-    return studentData.Status === 'Avaliação Agendada' || studentData.Status === 'Reavaliação por Pendencias  - Agendamento Confirmado';
+    console.log('Status atual:', `"${studentData.Status}"`);
+    console.log('Status tem espaços extras?', studentData.Status?.includes('  '));
+    return studentData.Status === 'Avaliação Agendada' || 
+           studentData.Status === 'Reavaliação por Pendencias  - Agendamento Confirmado' ||
+           studentData.Status === 'Reavaliação por Pendencias - Agendamento Confirmado';
   };
 
   // Helper function to display boolean values as icons
