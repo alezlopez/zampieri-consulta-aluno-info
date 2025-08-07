@@ -119,10 +119,10 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       return;
     }
 
-    if (!selectedDiscount && studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado') {
+    if (!selectedDiscount && studentData.Status === 'Avaliação Agendada') {
       toast({
         title: "Erro",
-        description: "Por favor, selecione o desconto",
+        description: "Por favor, selecione o desconto na mensalidade",
         variant: "destructive",
       });
       return;
