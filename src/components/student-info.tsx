@@ -59,17 +59,24 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const [observations, setObservations] = useState<string>("");
 
   const handleConfirmInterview = async () => {
+    if (!selectedDiscount) {
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione o desconto",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       const newStatus = 'Entrevista Realizada - Matrícula Pendente';
       const successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
 
-      const updateData: any = { Status: newStatus };
-      
-      // Incluir o desconto se foi selecionado
-      if (selectedDiscount) {
-        updateData.desconto = selectedDiscount;
-      }
+      const updateData: any = { 
+        Status: newStatus,
+        desconto: selectedDiscount
+      };
 
       const { error } = await supabase
         .from('pre_matricula')
@@ -112,6 +119,15 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       return;
     }
 
+    if (!selectedDiscount) {
+      toast({
+        title: "Erro",
+        description: "Por favor, selecione o desconto",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
       const newStatus = 'Entrevista Realizada - Pendente';
@@ -121,7 +137,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         .from('pre_matricula')
         .update({ 
           Status: newStatus,
-          obs_entrevista: observations
+          obs_entrevista: observations,
+          desconto: selectedDiscount
         })
         .eq('id', studentData.id);
 
@@ -137,6 +154,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       // Atualizar o estado local para refletir a mudança
       studentData.Status = newStatus;
       studentData.obs_entrevista = observations;
+      studentData.desconto = selectedDiscount;
       
       // Fechar o dialog e limpar observações
       setShowObservationsDialog(false);
