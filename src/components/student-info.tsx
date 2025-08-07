@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { formatDate } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -47,17 +48,18 @@ export interface PreMatricula {
   Rg_terapeuta_ocupacional: string | null;
   telefone_terapeuta_ocupacional: string | null;
   link_contrato: string | null;
+  obs_entrevista: string | null;
 }
 
 export function StudentInfo({ studentData }: StudentInfoProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDiscount, setSelectedDiscount] = useState<string>("");
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showObservationsDialog, setShowObservationsDialog] = useState(false);
+  const [observations, setObservations] = useState<string>("");
 
   const handleConfirmInterview = async () => {
     setIsLoading(true);
-    setShowConfirmDialog(false);
     try {
       const newStatus = 'Entrevista Realizada - Matrícula Pendente';
       const successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
@@ -100,16 +102,27 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
     }
   };
 
-  const handleLeavePending = async () => {
+  const handlePendingWithObservations = async () => {
+    if (!observations.trim()) {
+      toast({
+        title: "Erro",
+        description: "Por favor, insira as observações",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
-    setShowConfirmDialog(false);
     try {
-      const newStatus = 'Pendente Reavaliação';
-      const successMessage = "Status atualizado para 'Pendente Reavaliação'";
+      const newStatus = 'Entrevista Realizada - Pendente';
+      const successMessage = "Status atualizado para 'Entrevista Realizada - Pendente'";
 
       const { error } = await supabase
         .from('pre_matricula')
-        .update({ Status: newStatus })
+        .update({ 
+          Status: newStatus,
+          obs_entrevista: observations
+        })
         .eq('id', studentData.id);
 
       if (error) {
@@ -123,6 +136,11 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
 
       // Atualizar o estado local para refletir a mudança
       studentData.Status = newStatus;
+      studentData.obs_entrevista = observations;
+      
+      // Fechar o dialog e limpar observações
+      setShowObservationsDialog(false);
+      setObservations("");
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
       toast({
@@ -182,13 +200,23 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button 
-                  onClick={() => setShowConfirmDialog(true)}
-                  disabled={isLoading}
-                  className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2 mt-6"
-                >
-                  {isLoading ? 'Enviando...' : getButtonText()}
-                </Button>
+                <div className="flex gap-2 mt-6">
+                  <Button 
+                    onClick={handleConfirmInterview}
+                    disabled={isLoading}
+                    className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
+                  >
+                    {isLoading ? 'Enviando...' : getButtonText()}
+                  </Button>
+                  <Button 
+                    onClick={() => setShowObservationsDialog(true)}
+                    disabled={isLoading}
+                    variant="destructive"
+                    className="px-8 py-2"
+                  >
+                    Pendente
+                  </Button>
+                </div>
               </div>
             )}
           </div>
@@ -432,29 +460,51 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         </Card>
       )}
 
-      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Atenção</AlertDialogTitle>
-            <AlertDialogDescription className="space-y-2">
-              <p>Só confirme a entrevista caso o aluno esteja apto para prosseguir.</p>
-              <p className="font-medium">Todos os dados e requisitos foram preenchidos para prosseguir com a matrícula?</p>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={handleLeavePending} disabled={isLoading}>
-              Não, deixar pendente
-            </AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleConfirmInterview} 
+      {studentData.Status === 'Entrevista Realizada - Pendente' && studentData.obs_entrevista && (
+        <Card>
+          <CardHeader className="bg-yellow-50">
+            <CardTitle className="text-yellow-800">Observações da Entrevista</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <p className="text-gray-800 whitespace-pre-wrap">{studentData.obs_entrevista}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      <Dialog open={showObservationsDialog} onOpenChange={setShowObservationsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Observações da Entrevista</DialogTitle>
+            <DialogDescription>
+              Adicione observações sobre a entrevista. O status será alterado para "Entrevista Realizada - Pendente".
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea
+              placeholder="Digite suas observações aqui..."
+              value={observations}
+              onChange={(e) => setObservations(e.target.value)}
+              rows={4}
+            />
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowObservationsDialog(false)}
               disabled={isLoading}
-              className="bg-school-darkGreen hover:bg-school-darkGreen/90"
             >
-              Sim, confirmar entrevista
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handlePendingWithObservations}
+              disabled={isLoading || !observations.trim()}
+              variant="destructive"
+            >
+              {isLoading ? 'Salvando...' : 'Confirmar Pendente'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
