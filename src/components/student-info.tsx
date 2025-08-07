@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { formatDate } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
@@ -52,9 +53,11 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDiscount, setSelectedDiscount] = useState<string>("");
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleConfirmInterview = async () => {
     setIsLoading(true);
+    setShowConfirmDialog(false);
     try {
       const newStatus = 'Entrevista Realizada - Matrícula Pendente';
       const successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
@@ -85,6 +88,41 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       if (selectedDiscount) {
         studentData.desconto = selectedDiscount;
       }
+    } catch (error) {
+      console.error('Erro ao atualizar status:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o status",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLeavePending = async () => {
+    setIsLoading(true);
+    setShowConfirmDialog(false);
+    try {
+      const newStatus = 'Pendente Reavaliação';
+      const successMessage = "Status atualizado para 'Pendente Reavaliação'";
+
+      const { error } = await supabase
+        .from('pre_matricula')
+        .update({ Status: newStatus })
+        .eq('id', studentData.id);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Sucesso",
+        description: successMessage,
+      });
+
+      // Atualizar o estado local para refletir a mudança
+      studentData.Status = newStatus;
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
       toast({
@@ -145,7 +183,7 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                   </Select>
                 </div>
                 <Button 
-                  onClick={handleConfirmInterview}
+                  onClick={() => setShowConfirmDialog(true)}
                   disabled={isLoading}
                   className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2 mt-6"
                 >
@@ -393,6 +431,30 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
           </CardContent>
         </Card>
       )}
+
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Atenção</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>Só confirme a entrevista caso o aluno esteja apto para prosseguir.</p>
+              <p className="font-medium">Todos os dados e requisitos foram preenchidos para prosseguir com a matrícula?</p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleLeavePending} disabled={isLoading}>
+              Não, deixar pendente
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleConfirmInterview} 
+              disabled={isLoading}
+              className="bg-school-darkGreen hover:bg-school-darkGreen/90"
+            >
+              Sim, confirmar entrevista
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
