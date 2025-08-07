@@ -58,10 +58,38 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
   const [showObservationsDialog, setShowObservationsDialog] = useState(false);
   const [observations, setObservations] = useState<string>("");
 
+  const getUIControls = () => {
+    const status = studentData.Status;
+    
+    if (status === 'Avaliação Agendada') {
+      return {
+        showDropdown: true,
+        showConfirmButton: true,
+        showPendentButton: true,
+        requireDiscount: true
+      };
+    } else if (status === 'Reavaliação por Pendencias - Agendamento Confirmado' || 
+               status === 'Reavaliação por Pendencias  - Agendamento Confirmado') {
+      return {
+        showDropdown: false,
+        showConfirmButton: true,
+        showPendentButton: false,
+        requireDiscount: false
+      };
+    } else {
+      return {
+        showDropdown: false,
+        showConfirmButton: false,
+        showPendentButton: false,
+        requireDiscount: false
+      };
+    }
+  };
+
   const handleConfirmInterview = async () => {
-    if (!selectedDiscount && 
-        studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado' && 
-        studentData.Status !== 'Reavaliação por Pendencias - Agendamento Confirmado') {
+    const uiControls = getUIControls();
+    
+    if (uiControls.requireDiscount && !selectedDiscount) {
       toast({
         title: "Erro",
         description: "Por favor, selecione o desconto",
@@ -79,9 +107,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         Status: newStatus
       };
 
-      // Só adiciona desconto se não for Reavaliação por Pendencias
-      if (studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado' && 
-          studentData.Status !== 'Reavaliação por Pendencias - Agendamento Confirmado') {
+      // Só adiciona desconto se for obrigatório
+      if (uiControls.requireDiscount && selectedDiscount) {
         updateData.desconto = selectedDiscount;
       }
 
@@ -126,7 +153,8 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       return;
     }
 
-    if (!selectedDiscount && studentData.Status === 'Avaliação Agendada') {
+    const uiControls = getUIControls();
+    if (uiControls.requireDiscount && !selectedDiscount) {
       toast({
         title: "Erro",
         description: "Por favor, selecione o desconto na mensalidade",
@@ -140,13 +168,19 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       const newStatus = 'Entrevista Realizada - Pendente';
       const successMessage = "Status atualizado para 'Entrevista Realizada - Pendente'";
 
+      const updateData: any = {
+        Status: newStatus,
+        obs_entrevista: observations
+      };
+
+      // Só adiciona desconto se for obrigatório
+      if (uiControls.requireDiscount && selectedDiscount) {
+        updateData.desconto = selectedDiscount;
+      }
+
       const { error } = await supabase
         .from('pre_matricula')
-        .update({ 
-          Status: newStatus,
-          obs_entrevista: observations,
-          desconto: selectedDiscount
-        })
+        .update(updateData)
         .eq('id', studentData.id);
 
       if (error) {
@@ -161,7 +195,9 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       // Atualizar o estado local para refletir a mudança
       studentData.Status = newStatus;
       studentData.obs_entrevista = observations;
-      studentData.desconto = selectedDiscount;
+      if (selectedDiscount) {
+        studentData.desconto = selectedDiscount;
+      }
       
       // Fechar o dialog e limpar observações
       setShowObservationsDialog(false);
@@ -182,13 +218,6 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
     return 'Confirmar Entrevista';
   };
 
-  const shouldShowButton = () => {
-    console.log('Status atual:', `"${studentData.Status}"`);
-    console.log('Status tem espaços extras?', studentData.Status?.includes('  '));
-    return studentData.Status === 'Avaliação Agendada' || 
-           studentData.Status === 'Reavaliação por Pendencias  - Agendamento Confirmado' ||
-           studentData.Status === 'Reavaliação por Pendencias - Agendamento Confirmado';
-  };
 
   // Helper function to display boolean values as icons
   const BooleanDisplay = ({ value, label }: { value: string | null, label: string }) => {
@@ -214,18 +243,13 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <p className="text-2xl font-bold text-primary">{studentData.Status || 'Pendente'}</p>
-            {shouldShowButton() && (
-              <div className="flex items-center gap-4">
-                {studentData.Status === 'Reavaliação por Pendencias  - Agendamento Confirmado' ? (
-                  <Button 
-                    onClick={handleConfirmInterview}
-                    disabled={isLoading}
-                    className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
-                  >
-                    {isLoading ? 'Enviando...' : getButtonText()}
-                  </Button>
-                ) : (
-                  <>
+            {(() => {
+              const uiControls = getUIControls();
+              const isButtonDisabled = uiControls.requireDiscount && !selectedDiscount;
+              
+              return (uiControls.showConfirmButton || uiControls.showPendentButton) && (
+                <div className="flex items-center gap-4">
+                  {uiControls.showDropdown && (
                     <div className="flex flex-col">
                       <label className="text-sm font-medium text-gray-500 mb-2">Desconto na mensalidade</label>
                       <Select value={selectedDiscount} onValueChange={setSelectedDiscount}>
@@ -239,27 +263,31 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="flex gap-2 mt-6">
+                  )}
+                  <div className="flex gap-2 mt-6">
+                    {uiControls.showConfirmButton && (
                       <Button 
                         onClick={handleConfirmInterview}
-                        disabled={isLoading}
+                        disabled={isLoading || isButtonDisabled}
                         className="bg-school-darkGreen hover:bg-school-darkGreen/90 text-white px-8 py-2"
                       >
                         {isLoading ? 'Enviando...' : getButtonText()}
                       </Button>
+                    )}
+                    {uiControls.showPendentButton && (
                       <Button 
                         onClick={() => setShowObservationsDialog(true)}
-                        disabled={isLoading}
+                        disabled={isLoading || isButtonDisabled}
                         variant="destructive"
                         className="px-8 py-2"
                       >
                         Pendente
                       </Button>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </CardContent>
       </Card>
