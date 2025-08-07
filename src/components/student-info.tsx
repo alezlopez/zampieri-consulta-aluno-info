@@ -74,9 +74,13 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
       const successMessage = "Status atualizado para 'Entrevista Realizada - Matrícula Pendente'";
 
       const updateData: any = { 
-        Status: newStatus,
-        desconto: selectedDiscount
+        Status: newStatus
       };
+
+      // Só adiciona desconto se não for Reavaliação por Pendencias
+      if (studentData.Status !== 'Reavaliação por Pendencias  - Agendamento Confirmado') {
+        updateData.desconto = selectedDiscount;
+      }
 
       const { error } = await supabase
         .from('pre_matricula')
