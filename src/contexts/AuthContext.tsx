@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signInWithUsername: (username: string, password: string) => Promise<{ error: string | null }>;
+  signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -47,34 +47,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signInWithUsername = async (username: string, password: string) => {
+  const signInWithEmail = async (email: string, password: string): Promise<{ error: string | null }> => {
     try {
       setLoading(true);
       
-      // Buscar email pelo username usando a função do banco
-      const { data: authData, error: functionError } = await supabase
-        .rpc('authenticate_with_username', {
-          p_username: username,
-          p_password: password
-        });
-
-      if (functionError || !authData || authData.length === 0) {
-        return { error: 'Erro ao buscar usuário' };
-      }
-
-      const userData = authData[0];
-      if (!userData.success) {
-        return { error: userData.message };
-      }
-
-      // Autenticar com email e senha
       const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: userData.email,
-        password: password,
+        email,
+        password,
       });
 
       if (signInError) {
-        return { error: 'Usuário ou senha inválidos' };
+        return { error: 'Email ou senha inválidos' };
       }
 
       return { error: null };
@@ -108,7 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     session,
     loading,
-    signInWithUsername,
+    signInWithEmail,
     signOut,
   };
 

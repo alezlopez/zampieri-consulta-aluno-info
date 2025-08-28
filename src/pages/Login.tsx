@@ -9,10 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader } from '@/components/loader';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signInWithUsername, user, loading } = useAuth();
+  const { signInWithEmail, user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -26,7 +26,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username.trim() || !password.trim()) {
+    if (!email.trim() || !password.trim()) {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos",
@@ -36,7 +36,7 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    const { error } = await signInWithUsername(username, password);
+    const { error } = await signInWithEmail(email, password);
     
     if (error) {
       toast({
@@ -74,13 +74,13 @@ const Login = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Usuário</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Digite seu usuário"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Digite seu email"
                 disabled={isLoading}
                 required
               />
