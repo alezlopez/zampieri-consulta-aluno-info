@@ -9,10 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader } from '@/components/loader';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signInWithEmail, user, loading } = useAuth();
+  const { signInWithEmail, signInWithUsername, user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -26,7 +26,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email.trim() || !password.trim()) {
+    if (!emailOrUsername.trim() || !password.trim()) {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos",
@@ -36,12 +36,21 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    const { error } = await signInWithEmail(email, password);
     
-    if (error) {
+    // Verificar se é email (contém @) ou username
+    const isEmail = emailOrUsername.includes('@');
+    let result;
+    
+    if (isEmail) {
+      result = await signInWithEmail(emailOrUsername, password);
+    } else {
+      result = await signInWithUsername(emailOrUsername, password);
+    }
+    
+    if (result.error) {
       toast({
         title: "Erro de Autenticação",
-        description: error,
+        description: result.error,
         variant: "destructive",
       });
     } else {
@@ -74,13 +83,13 @@ const Login = () => {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="emailOrUsername">Email ou Usuário</Label>
               <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Digite seu email"
+                id="emailOrUsername"
+                type="text"
+                value={emailOrUsername}
+                onChange={(e) => setEmailOrUsername(e.target.value)}
+                placeholder="Digite seu email ou usuário"
                 disabled={isLoading}
                 required
               />
