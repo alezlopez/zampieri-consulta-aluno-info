@@ -15,6 +15,7 @@ interface Student {
   nomeResponsavel: string | null;
   whatsapp: string | null;
   Status: string | null;
+  desconto: string | null;
 }
 
 const AdminPage = () => {
@@ -31,7 +32,7 @@ const AdminPage = () => {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('pre_matricula')
-        .select('id, nomeAluno, nomeResponsavel, whatsapp, Status')
+        .select('id, nomeAluno, nomeResponsavel, whatsapp, Status, desconto')
         .order('nomeAluno');
 
       if (error) {
@@ -153,13 +154,14 @@ const AdminPage = () => {
                     <TableHead>Nome do Aluno</TableHead>
                     <TableHead>Responsável</TableHead>
                     <TableHead>WhatsApp</TableHead>
+                    <TableHead>Desconto</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredStudents.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                         Nenhum aluno encontrado
                       </TableCell>
                     </TableRow>
@@ -174,6 +176,9 @@ const AdminPage = () => {
                         </TableCell>
                         <TableCell>
                           {student.whatsapp || 'N/A'}
+                        </TableCell>
+                        <TableCell>
+                          {student.desconto || 'N/A'}
                         </TableCell>
                         <TableCell>
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
