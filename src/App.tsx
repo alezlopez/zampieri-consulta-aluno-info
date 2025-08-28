@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 import { Loader } from "@/components/loader";
 
@@ -71,6 +72,14 @@ const App = () => (
                 <PublicRoute>
                   <Login />
                 </PublicRoute>
+              } 
+            />
+            <Route 
+              path="/adm" 
+              element={
+                <ProtectedRoute>
+                  <AdminPage />
+                </ProtectedRoute>
               } 
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
