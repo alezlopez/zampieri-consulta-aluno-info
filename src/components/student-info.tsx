@@ -144,6 +144,40 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
     }
   };
 
+  const getDiscountOptions = () => {
+    const serie = studentData.serie_pretendida;
+    
+    if (!serie) return ['5', '15', '35'];
+    
+    const serieNormalized = serie.toLowerCase();
+    
+    // Se a série pretendida for pré
+    if (serieNormalized.includes('pré') || serieNormalized.includes('pre')) {
+      return ['5', '30', '60'];
+    }
+    
+    // Se a série pretendida for 1º ano, 2º ano, 3º ano, 6º ano, 1º Médio e 2º Médio
+    if (serieNormalized.includes('1º ano') || serieNormalized.includes('2º ano') || 
+        serieNormalized.includes('3º ano') || serieNormalized.includes('6º ano') ||
+        serieNormalized.includes('1º médio') || serieNormalized.includes('2º médio')) {
+      return ['5', '15', '35', '40'];
+    }
+    
+    // Se a série pretendida for 4º ano
+    if (serieNormalized.includes('4º ano')) {
+      return ['5', '15', '35'];
+    }
+    
+    // Se a série pretendida for 5º ano, 8º ano e 3º Médio
+    if (serieNormalized.includes('5º ano') || serieNormalized.includes('8º ano') || 
+        serieNormalized.includes('3º médio')) {
+      return ['5', '15', '35', '40', '50'];
+    }
+    
+    // Default caso não se encaixe em nenhuma regra específica
+    return ['5', '15', '35'];
+  };
+
   const handlePendingWithObservations = async () => {
     if (!observations.trim()) {
       toast({
@@ -258,9 +292,11 @@ export function StudentInfo({ studentData }: StudentInfoProps) {
                           <SelectValue placeholder="Selecionar" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="5">5%</SelectItem>
-                          <SelectItem value="15">15%</SelectItem>
-                          <SelectItem value="30">30%</SelectItem>
+                          {getDiscountOptions().map((discount) => (
+                            <SelectItem key={discount} value={discount}>
+                              {discount}%
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
