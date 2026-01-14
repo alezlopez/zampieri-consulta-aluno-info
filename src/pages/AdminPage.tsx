@@ -4,10 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader } from '@/components/loader';
-import { LogOut } from 'lucide-react';
+import { LogOut, Trash2 } from 'lucide-react';
 
 interface Student {
   id: number;
@@ -26,6 +36,9 @@ const AdminPage = () => {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [availableStatuses, setAvailableStatuses] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const fetchStudents = async () => {
@@ -86,6 +99,45 @@ const AdminPage = () => {
         description: "Erro ao fazer logout",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleDeleteClick = (student: Student) => {
+    setStudentToDelete(student);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!studentToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      const { error } = await supabase
+        .from('pre_matricula')
+        .delete()
+        .eq('id', studentToDelete.id);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Registro excluído",
+        description: `O registro de ${studentToDelete.nomeAluno || 'aluno'} foi excluído com sucesso.`,
+      });
+
+      // Atualiza a lista removendo o aluno excluído
+      setStudents(prev => prev.filter(s => s.id !== studentToDelete.id));
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Erro ao excluir o registro",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
+      setStudentToDelete(null);
     }
   };
 
@@ -158,12 +210,13 @@ const AdminPage = () => {
                     <TableHead>Desconto</TableHead>
                     <TableHead>Data da Entrevista</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="w-20 text-center">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredStudents.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                         Nenhum aluno encontrado
                       </TableCell>
                     </TableRow>
@@ -200,6 +253,16 @@ const AdminPage = () => {
                             {student.Status || 'Sem Status'}
                           </span>
                         </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteClick(student)}
+                            className="text-red-600 hover:text-red-800 hover:bg-red-100"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
@@ -209,6 +272,31 @@ const AdminPage = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir o registro de{' '}
+              <strong>{studentToDelete?.nomeAluno || 'este aluno'}</strong>?
+              <br />
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {isDeleting ? 'Excluindo...' : 'Excluir'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
