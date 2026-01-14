@@ -29,6 +29,17 @@ interface Student {
   data_entrevista: string | null;
 }
 
+const ALL_STATUSES = [
+  'Pré-Matrícula Iniciada',
+  'Avaliação Agendada',
+  'Entrevista Realizada - Matrícula Pendente',
+  'Aprovado',
+  'Reprovado',
+  'Pendente com Observações',
+  'Matrícula Concluída',
+  'Cancelado',
+];
+
 const AdminPage = () => {
   const { user, signOut } = useAuth();
   const [students, setStudents] = useState<Student[]>([]);
@@ -105,6 +116,35 @@ const AdminPage = () => {
   const handleDeleteClick = (student: Student) => {
     setStudentToDelete(student);
     setIsDeleteDialogOpen(true);
+  };
+
+  const handleStatusChange = async (studentId: number, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('pre_matricula')
+        .update({ Status: newStatus })
+        .eq('id', studentId);
+
+      if (error) {
+        throw error;
+      }
+
+      // Atualiza a lista localmente
+      setStudents(prev => prev.map(s => 
+        s.id === studentId ? { ...s, Status: newStatus } : s
+      ));
+
+      toast({
+        title: "Status atualizado",
+        description: `Status alterado para "${newStatus}"`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Erro ao atualizar o status",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -241,17 +281,21 @@ const AdminPage = () => {
                             : '-'}
                         </TableCell>
                         <TableCell>
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            student.Status === 'Aprovado' 
-                              ? 'bg-green-100 text-green-800'
-                              : student.Status === 'Reprovado'
-                              ? 'bg-red-100 text-red-800'
-                              : student.Status?.includes('Pendente')
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {student.Status || 'Sem Status'}
-                          </span>
+                          <Select 
+                            value={student.Status || ''} 
+                            onValueChange={(value) => handleStatusChange(student.id, value)}
+                          >
+                            <SelectTrigger className="w-48 h-8 text-xs">
+                              <SelectValue placeholder="Selecionar status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ALL_STATUSES.map((status) => (
+                                <SelectItem key={status} value={status}>
+                                  {status}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell className="text-center">
                           <Button
