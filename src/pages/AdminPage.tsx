@@ -30,14 +30,12 @@ interface Student {
 }
 
 const ALL_STATUSES = [
-  'Pré-Matrícula Iniciada',
   'Avaliação Agendada',
+  'CPF Aprovado - Aguardando Agendamento',
+  'CPF Negativo - Reprovado',
+  'Concluido - Contrato Assinado',
+  'Contrato Enviado',
   'Entrevista Realizada - Matrícula Pendente',
-  'Aprovado',
-  'Reprovado',
-  'Pendente com Observações',
-  'Matrícula Concluída',
-  'Cancelado',
 ];
 
 const AdminPage = () => {
